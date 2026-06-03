@@ -1,0 +1,88 @@
+# =============================================================================
+# .gitignore — Fruit Quality Classification
+# Algoritmos y Programación III · ICESI · 2026-1
+# =============================================================================
+
+# ─── DATOS  ──────────────────────────────────────────────────────────────────
+data/raw/*
+!data/raw/README.md
+
+data/processed/*
+!data/processed/README.md
+
+# ─── MODELOS ENTRENADOS ──────────────────────────────────────────────────────
+saved_models/*
+!saved_models/README.md
+
+# ─── PYTHON ──────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+.Python
+
+# Entornos virtuales
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+.conda/
+
+# Instalaciones locales de pip
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+var/
+sdist/
+develop-eggs/
+.installed.cfg
+lib/
+lib64/
+
+# ─── JUPYTER NOTEBOOKS ───────────────────────────────────────────────────────
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/
+notebooks/.ipynb_checkpoints/
+
+# ─── IDEs Y EDITORES ─────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ─── LOGS Y TEMPORALES ───────────────────────────────────────────────────────
+*.log
+*.tmp
+*.temp
+logs/
+runs/
+mlruns/
+
+# ─── STREAMLIT ───────────────────────────────────────────────────────────────
+.streamlit/secrets.toml
+
+# ─── SISTEMA ─────────────────────────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+desktop.ini
+
+# ─── VARIABLES DE ENTORNO ────────────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+secrets.yaml
+config_local.py
