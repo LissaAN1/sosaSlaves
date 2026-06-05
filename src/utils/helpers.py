@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 from PIL import Image
 
-def load_image_for_dl(image_path, target_size=(128, 128)):
+def load_image_for_dl(image_path, target_size=(224, 224)):
     """
     Carga y preprocesa una imagen desde una ruta local para el modelo de Deep Learning (CNN).
     Retorna la imagen redimensionada y normalizada en un tensor de forma (1, W, H, C).
@@ -61,7 +61,7 @@ def extract_features_for_ml(image_path):
     # Devolver como (1, n_features) para que scikit-learn lo acepte en .predict()
     return combined_features.reshape(1, -1)
 
-def process_image_from_streamlit(uploaded_file, model_type='dl', target_size=(128, 128)):
+def process_image_from_streamlit(uploaded_file, model_type='dl', target_size=(224, 224)):
     """
     Toma un archivo subido a través de Streamlit (st.file_uploader o st.camera_input)
     y lo procesa dependiendo del tipo de modelo a evaluar.
@@ -86,7 +86,7 @@ def process_image_from_streamlit(uploaded_file, model_type='dl', target_size=(12
         # Procesamiento equivalente a extract_features_for_ml()
         # Convertimos a BGR para aplicar los métodos de OpenCV de manera consistente
         img_bgr = cv2.cvtColor(img_array, cv2.COLOR_RGB2BGR)
-        
+        img_bgr = cv2.resize(img_bgr, (224, 224))
         # Color Features
         hsv_img = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2HSV)
         hist = cv2.calcHist([hsv_img], [0, 1, 2], None, [8, 8, 8], [0, 180, 0, 256, 0, 256])

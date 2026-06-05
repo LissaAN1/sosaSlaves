@@ -12,7 +12,7 @@ sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 from src.utils.helpers import process_image_from_streamlit
 
 # Diccionarios de decodificación
-QUALITY_CLASSES = ['Mala', 'Regular', 'Buena']
+QUALITY_CLASSES = ['Mala', 'Buena', 'Regular']
 SIZE_CLASSES = ['Pequeño', 'Mediano', 'Grande']
 
 # Rutas de los modelos entrenados
@@ -25,7 +25,7 @@ st.set_page_config(page_title="Clasificador Multi-Salida de Frutas", layout="cen
 st.title("Clasificador de Calidad y Tamaño")
 st.markdown("""
 Esta aplicación utiliza los modelos entrenados en la **Fase 2 de CRISP-DM** para evaluar imágenes de frutas o verduras y predecir de forma simultánea:
-1. **Calidad**: Mala, Regular, Buena.
+1. **Calidad**: Mala, Buena, Regular.
 2. **Tamaño**: Pequeño, Mediano, Grande.
 """)
 
