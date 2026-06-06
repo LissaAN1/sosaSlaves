@@ -10,10 +10,6 @@ data/raw/*
 data/processed/*
 !data/processed/README.md
 
-# ─── MODELOS ENTRENADOS ──────────────────────────────────────────────────────
-saved_models/*
-!saved_models/README.md
-
 # ─── PYTHON ──────────────────────────────────────────────────────────────────
 __pycache__/
 *.py[cod]
