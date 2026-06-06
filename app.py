@@ -16,8 +16,8 @@ QUALITY_CLASSES = ['Mala', 'Buena', 'Regular']
 SIZE_CLASSES = ['Pequeño', 'Mediano', 'Grande']
 
 # Rutas de los modelos entrenados
-ML_MODEL_PATH = 'models/best_rf_multioutput.pkl'
-DL_MODEL_PATH = 'models/cnn_multioutput.keras'
+ML_MODEL_PATH = 'saved_models/best_rf_multioutput.pkl'
+DL_MODEL_PATH = 'saved_models/cnn_multioutput.keras'
 
 # Configuración inicial de Streamlit
 st.set_page_config(page_title="Clasificador Multi-Salida de Frutas", layout="centered")
@@ -104,8 +104,12 @@ if uploaded_file is not None:
                         predictions = model.predict(img_tensor)
                         
                         # Aplicar Argmax para obtener el índice ganador
-                        pred_quality_idx = np.argmax(predictions[0], axis=1)[0]
-                        pred_size_idx = np.argmax(predictions[1], axis=1)[0]
+                        if isinstance(predictions, dict):
+                            pred_quality_idx = np.argmax(predictions['quality_output'], axis=1)[0]
+                            pred_size_idx    = np.argmax(predictions['size_output'], axis=1)[0]
+                        else:
+                            pred_quality_idx = np.argmax(predictions[0], axis=1)[0]
+                            pred_size_idx    = np.argmax(predictions[1], axis=1)[0]
                         
                         # Obtener porcentajes de confianza
                         conf_quality = np.max(predictions[0]) * 100
