@@ -1,0 +1,34 @@
+# ============================================================
+# requirements.txt — Proyecto: fruit-quality-classification
+# Algoritmos y Programación III · ICESI · Semestre 2026-1
+# ============================================================
+
+# ── Core científico
+numpy>=1.24
+pandas>=2.0
+scikit-learn>=1.3
+scipy>=1.11
+
+# ── Visión / preprocesamiento
+opencv-python>=4.8
+Pillow>=10.0
+
+# ── Deep Learning
+tensorflow>=2.13          # usar tensorflow[and-cuda] si tienes GPU NVIDIA
+
+# ── Visualización
+matplotlib>=3.7
+seaborn>=0.13
+
+# ── Progreso
+tqdm>=4.65
+
+# ── Serialización de modelos
+joblib>=1.3
+
+# ── Interfaz web
+streamlit>=1.28
+
+# ── Notebooks
+jupyter>=1.0
+ipykernel>=6.25

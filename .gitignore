@@ -86,3 +86,35 @@ desktop.ini
 .env.*.local
 secrets.yaml
 config_local.py
+
+
+#-----------------------------
+# Datos pesados
+data/
+data/raw/
+data/processed/
+
+# Modelos entrenados pesados
+models/
+saved_models/
+*.pkl
+*.keras
+*.h5
+
+# Jupyter
+.ipynb_checkpoints/
+notebooks/.ipynb_checkpoints/
+notebooks/files/
+
+# Python
+__pycache__/
+*.pyc
+
+# Entornos
+.venv/
+venv/
+env/
+
+# Sistema
+.DS_Store
+Thumbs.db
