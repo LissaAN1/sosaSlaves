@@ -1,6 +1,6 @@
 # Clasificador de Calidad y Tamaño de Frutas
 
-**Proyecto Final — Algoritmos y Programación III · ICESI · Semestre 2026-1**
+**Proyecto Final — Algoritmos y Programación III · Universidad ICESI · Semestre 2026-1**
 
 Equipo **sosaSlaves**: Angy Hurtado · Hideki Tamura · David Vergara
 
@@ -10,34 +10,39 @@ Equipo **sosaSlaves**: Angy Hurtado · Hideki Tamura · David Vergara
 
 Sistema de clasificación multi-salida que predice simultáneamente:
 
-- **Calidad**: Mala · Regular · Buena
+- **Calidad**: Mala · Buena · Regular
 - **Tamaño**: Pequeño · Mediano · Grande
 
-El proyecto usa metodología **CRISP-DM**, modelos de **Machine Learning tradicional** y **Deep Learning**, además de una interfaz web desarrollada con **Streamlit** (`app.py`).
+El proyecto usa visión por computadora, modelos tradicionales de machine learning, una red neuronal convolucional multi-salida y una interfaz web desarrollada con **Streamlit**.
 
 ---
 
-## Estructura del proyecto
+## Estructura esperada del proyecto
 
 ```text
-sosaSlaves/
-├── app.py                                      # Interfaz Streamlit
-├── requirements.txt                           # Dependencias del proyecto
-├── README.md                                  # Instrucciones de instalación y ejecución
+fruit-quality-classification/
+├── app.py
+├── README.md
+├── requirements.txt
 ├── data/
-│   ├── raw/                                   # Imágenes originales, no incluidas en Git
-│   └── processed/                             # Imágenes preprocesadas + metadata.csv, no incluidas en Git
+│   ├── raw/
+│   └── processed/
 ├── docs/
-│   └── figures/                               # Figuras del EDA y matrices de confusión
+│   ├── informe_final.pdf
+│   └── figures/
 ├── notebooks/
 │   ├── 01_analisis_exploratorio_datos.ipynb
 │   ├── 02_experimentos_ml_tradicional.ipynb
 │   └── 03_experimentos_deep_learning.ipynb
-├── saved_models/                              # Modelos entrenados exportados
-│   ├── best_rf_multioutput.pkl
+├── saved_models/
 │   ├── random_forest_multioutput.pkl
 │   ├── svm_lineal_multioutput.pkl
 │   ├── xgboost_multioutput.pkl
+│   ├── best_traditional_multioutput.pkl
+│   ├── best_rf_multioutput.pkl
+│   ├── traditional_model_metadata.json
+│   ├── traditional_models_results.csv
+│   ├── cnn_best_checkpoint.keras
 │   └── cnn_multioutput.keras
 └── src/
     ├── data_processing/
@@ -50,64 +55,98 @@ sosaSlaves/
 
 ---
 
-## Requisitos recomendados
+## Modelos y artefactos guardados
 
-- **Python 3.10 o 3.11**
-- **Windows, Linux o macOS**
-- **16 GB de RAM recomendado** para entrenamiento completo
-- **GPU opcional** para entrenar la CNN
+Los modelos deben ubicarse en la carpeta `saved_models/`.
 
-> En Windows nativo, TensorFlow moderno puede no usar GPU aunque CUDA esté instalado. Para entrenar CNN con GPU NVIDIA se recomienda usar **Google Colab**, **WSL2 con Ubuntu** o un equipo Linux con GPU configurada.
+### Artefactos generados por el notebook 02 — ML tradicional
+
+| Archivo | Descripción | Uso |
+|---|---|---|
+| `random_forest_multioutput.pkl` | Random Forest base | Modelo comparativo tradicional |
+| `svm_lineal_multioutput.pkl` | SVM lineal | Modelo comparativo tradicional |
+| `xgboost_multioutput.pkl` | XGBoost | Modelo tradicional principal |
+| `best_traditional_multioutput.pkl` | Mejor modelo tradicional de los experimentos | Corresponde al XGBoost ganador por F1-macro promedio multi-salida |
+| `best_rf_multioutput.pkl` | Copia de Random Forest | Compatibilidad con versiones previas |
+| `traditional_model_metadata.json` | Metadatos del pipeline tradicional | Etiquetas, dimensión de features y configuración |
+| `traditional_models_results.csv` | Tabla de resultados finales | Evidencia reproducible de la comparación entre modelos tradicionales |
+
+> Nota: el notebook 02 puede incluir una sección opcional para ajuste de hiperparámetros de Random Forest. Sin embargo, la entrega final no depende de `random_forest_tuned_multioutput.pkl`, ya que la comparación principal se realiza entre Random Forest, SVM lineal, XGBoost y CNN.
+
+### Artefactos generados por el notebook 03 — CNN
+
+| Archivo | Descripción | Uso |
+|---|---|---|
+| `cnn_best_checkpoint.keras` | Checkpoint del mejor epoch durante entrenamiento | Respaldo del entrenamiento |
+| `cnn_multioutput.keras` | Modelo final cargado desde el checkpoint | Modelo CNN usado por `app.py` |
 
 ---
 
-## Instalación recomendada
+## Consistencia entre informe, modelos y aplicación
 
-Se recomienda usar un entorno virtual para evitar conflictos con paquetes globales de Python.
+Si el informe afirma que **XGBoost obtuvo el mejor F1-macro promedio**, entonces la entrega debe cumplir:
 
-### 1. Clonar o descargar el repositorio
-
-```bash
-git clone https://github.com/LissaAN1/fruit-quality-classification.git
-cd fruit-quality-classification
+```text
+best_traditional_multioutput.pkl = modelo XGBoost ganador
+xgboost_multioutput.pkl = modelo XGBoost entrenado
+best_rf_multioutput.pkl = copia de Random Forest para compatibilidad
 ```
 
+No se debe renombrar un Random Forest como si fuera XGBoost, porque eso generaría una inconsistencia entre informe, código y sustentación.
 
-### 2. Crear entorno virtual
+---
 
-En **Windows PowerShell**:
+## Descarga o ubicación de modelos entrenados
+
+Los archivos `.pkl` y `.keras` pueden no subirse directamente a GitHub por peso. Para ejecutar la aplicación, la carpeta `saved_models/` debe estar disponible en la raíz del proyecto.
+
+La estructura mínima esperada es:
+
+```text
+fruit-quality-classification/
+└── saved_models/
+    ├── random_forest_multioutput.pkl
+    ├── svm_lineal_multioutput.pkl
+    ├── xgboost_multioutput.pkl
+    ├── best_traditional_multioutput.pkl
+    ├── best_rf_multioutput.pkl
+    ├── traditional_model_metadata.json
+    ├── traditional_models_results.csv
+    ├── cnn_best_checkpoint.keras
+    └── cnn_multioutput.keras
+```
+
+Si los modelos se entregan mediante Google Drive, GitHub Release u otro medio externo, deben copiarse manualmente en `saved_models/` antes de ejecutar la app.
+
+---
+
+## Instalación
+
+Se recomienda usar Python 3.10 o 3.11.
+
+### 1. Crear entorno virtual
+
+En Windows PowerShell:
 
 ```powershell
 python -m venv .venv
-```
-
-Activar el entorno:
-
-```powershell
 .\.venv\Scripts\activate
 ```
 
-Si PowerShell bloquea la activación, ejecutar:
-
-```powershell
-Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-.\.venv\Scripts\activate
-```
-
-En **Linux/macOS**:
+En Linux/macOS:
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 ```
 
-### 3. Actualizar herramientas base
+### 2. Actualizar herramientas base
 
 ```bash
 python -m pip install --upgrade pip setuptools wheel
 ```
 
-### 4. Instalar dependencias
+### 3. Instalar dependencias
 
 ```bash
 python -m pip install -r requirements.txt
@@ -115,11 +154,9 @@ python -m pip install -r requirements.txt
 
 ---
 
-## Ejecutar la aplicación web
+## Ejecutar la aplicación
 
-Los modelos entrenados deben estar en la carpeta `saved_models/`.
-
-Desde la raíz del proyecto, ejecutar:
+Desde la raíz del proyecto:
 
 ```bash
 python -m streamlit run app.py
@@ -131,143 +168,201 @@ Luego abrir en el navegador:
 http://localhost:8501
 ```
 
-> Se recomienda usar `python -m streamlit run app.py` en lugar de `streamlit run app.py`, porque en Windows a veces el ejecutable `streamlit.exe` no queda agregado al PATH.
-
-> Tambien puedes ejecutar la app con más detalle;
-
-```bash
-python -m streamlit run app.py --logger.level=debug
-```
-
 ---
 
 ## Uso de la aplicación
 
-1. Seleccionar el modelo en el panel lateral:
-   - **ML Tradicional**
-   - **CNN**
-2. Subir una imagen de fruta o tomar una foto con la cámara.
-3. Presionar **"Predecir Simultáneamente"**.
+1. Seleccionar el modelo en el panel lateral.
+2. Subir una imagen o tomar una foto con la cámara.
+3. Presionar **Predecir simultáneamente**.
 4. La aplicación muestra:
-   - Calidad estimada
-   - Tamaño estimado
-   - Porcentaje de confianza, cuando aplique
+   - calidad estimada;
+   - tamaño estimado;
+   - confianza, cuando el modelo permite calcularla.
+
+La aplicación también muestra un panel de verificación de artefactos esperados para comprobar qué archivos están disponibles y cuáles faltan.
 
 ---
 
 ## Dataset
 
-> La carpeta `data/raw/` no está incluida en este repositorio por el tamaño del dataset.
+El dataset final contiene imágenes de seis frutas:
 
-Descargar el dataset desde Google Drive:
+- Apple
+- Banana
+- Guava
+- Lime
+- Orange
+- Pomegranate
 
-```text
-https://drive.google.com/drive/folders/1RINyjn96rrDTddl0RKnpiz-JC0aGIW8R?usp=sharing
-```
+Clases de calidad:
 
-Colocar las imágenes dentro de `data/raw/` respetando esta estructura:
+- Bad
+- Good
+- Regular
 
-```text
-data/raw/
-├── Bad Quality_Fruits/
-│   ├── Apple_Bad/
-│   └── ...
-├── Good Quality_Fruits/
-│   └── ...
-└── Regular Qualit_Fruits/
-    └── ...
-```
+Distribución reportada en el proyecto:
 
-Información del dataset:
+| Clase | Imágenes | Porcentaje |
+|---|---:|---:|
+| Bad | 9,142 | 32.2% |
+| Good | 14,599 | 51.4% |
+| Regular | 4,654 | 16.4% |
 
-- **Fuente base**: Fruit Quality Classification — Kaggle
-- **Clase Regular**: construida manualmente desde `mix quality_fruits` + fotos propias del equipo
-- **Frutas**: Apple · Banana · Guava · Lime · Orange · Pomegranate
-- **Total imágenes originales**: 28 395
-  - Bad: 9 142
-  - Good: 14 599
-  - Regular: 4 654
-- **Imágenes aumentadas**: 113 580
+Total de imágenes originales: **28,395**.
 
 ---
 
-## Reproducir el entrenamiento completo
+## Pipeline de inferencia tradicional
 
-Este paso es opcional. Solo debe hacerse si se quiere reentrenar los modelos desde cero.
+Para los modelos tradicionales, `app.py` usa la función:
 
-### Paso 1 — Preprocesar imágenes
+```python
+process_image_from_streamlit(uploaded_file, model_type="ml")
+```
 
-Desde la raíz del proyecto:
+El vector esperado tiene dimensión:
+
+```text
+513 features = 512 bins HSV + 1 area_ratio
+```
+
+El archivo `traditional_model_metadata.json` documenta esta dimensión y el orden de etiquetas.
+
+Ejemplo de metadata esperado:
+
+```json
+{
+  "best_model_name": "XGBoost",
+  "quality_labels": [0, 1, 2],
+  "quality_names": ["Mala", "Buena", "Regular"],
+  "size_labels": [0, 1, 2],
+  "size_names": ["Pequeño", "Mediano", "Grande"],
+  "feature_dim": 513,
+  "test_size": 0.2,
+  "random_state": 42
+}
+```
+
+---
+
+## Pipeline de inferencia CNN
+
+Para la CNN, `app.py` usa la función:
+
+```python
+process_image_from_streamlit(uploaded_file, model_type="dl")
+```
+
+La entrada esperada es un tensor:
+
+```text
+(1, 224, 224, 3)
+```
+
+La normalización debe coincidir con la usada durante el entrenamiento del notebook 03.
+
+---
+
+## Reproducir entrenamiento
+
+### 1. Preprocesamiento
 
 ```bash
 python src/data_processing/preprocess.py
 ```
 
-Con opciones personalizadas:
+### 2. EDA
 
 ```bash
-python src/data_processing/preprocess.py --size 224 --augment 4
+jupyter notebook notebooks/01_analisis_exploratorio_datos.ipynb
 ```
 
-Esto genera:
+### 3. Modelos tradicionales
+
+```bash
+jupyter notebook notebooks/02_experimentos_ml_tradicional.ipynb
+```
+
+Este notebook debe generar:
 
 ```text
-data/processed/
-data/processed/metadata.csv
+saved_models/random_forest_multioutput.pkl
+saved_models/svm_lineal_multioutput.pkl
+saved_models/xgboost_multioutput.pkl
+saved_models/best_traditional_multioutput.pkl
+saved_models/best_rf_multioutput.pkl
+saved_models/traditional_model_metadata.json
+saved_models/traditional_models_results.csv
 ```
 
-### Paso 2 — Ejecutar análisis exploratorio
+### 4. CNN
 
 ```bash
-cd notebooks
-jupyter notebook 01_analisis_exploratorio_datos.ipynb
+jupyter notebook notebooks/03_experimentos_deep_learning.ipynb
 ```
 
-### Paso 3 — Entrenar modelos tradicionales
-
-```bash
-jupyter notebook 02_experimentos_ml_tradicional.ipynb
-```
-
-Este notebook entrena y compara:
-
-- Random Forest
-- SVM lineal
-- XGBoost
-
-Los modelos se guardan en:
+Este notebook debe generar:
 
 ```text
-saved_models/
+saved_models/cnn_best_checkpoint.keras
+saved_models/cnn_multioutput.keras
 ```
-
-### Paso 4 — Entrenar CNN
-
-```bash
-jupyter notebook 03_experimentos_deep_learning.ipynb
-```
-
-La CNN es el entrenamiento más pesado. Para ejecutarla completa se recomienda:
-
-- Equipo con suficiente espacio libre
-- 16 GB de RAM o más
-- GPU o Google Colab
-
-Si se ejecuta en CPU, puede tardar mucho o reiniciar el kernel por falta de memoria.
 
 ---
 
-## Notas técnicas
+## Verificación antes de entrega
 
-- La normalización de imágenes usa **z-score de ImageNet**:
-  - Media: `[0.485, 0.456, 0.406]`
-  - Desviación estándar: `[0.229, 0.224, 0.225]`
-- El split train/test usa únicamente imágenes originales (`augmented == 0`) para el conjunto de prueba.
-- Esto evita contaminación entre imágenes originales y aumentadas.
-- Para el desbalance de clases se usa:
-  - `class_weight='balanced'` en Random Forest y SVM
-  - `sample_weight` o pesos equivalentes en XGBoost/CNN
-- Los modelos se exportan en `saved_models/`.
-- Las imágenes y archivos pesados no deben subirse a Git.
+Antes de sustentar, revisar:
+
+1. La carpeta `saved_models/` existe.
+2. Todos los artefactos esperados están presentes.
+3. `best_traditional_multioutput.pkl` corresponde al XGBoost ganador.
+4. `traditional_model_metadata.json` contiene `quality_names`, `size_names` y `feature_dim`.
+5. `traditional_models_results.csv` contiene la tabla final de métricas.
+6. La app abre correctamente con:
+
+```bash
+python -m streamlit run app.py
+```
+
+7. La app predice con imagen cargada.
+8. La app predice con cámara.
+9. La CNN carga correctamente.
+10. El mejor modelo tradicional carga correctamente.
+11. El README y el informe mencionan los mismos nombres de archivos.
+12. No hay modelos renombrados de forma engañosa.
 
 ---
+
+## Privacidad
+
+Las imágenes cargadas o capturadas se usan únicamente para generar la predicción en la sesión actual de Streamlit. La aplicación no almacena imágenes de usuarios de forma permanente.
+
+---
+
+## Problemas comunes
+
+### La app no muestra todos los modelos
+
+Significa que faltan archivos en `saved_models/`. La app solo habilita modelos seleccionables encontrados.
+
+### TensorFlow no carga
+
+Verificar que se instalaron las dependencias:
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+### El modelo tradicional carga pero predice mal
+
+Revisar que el pipeline de entrenamiento y el de inferencia usen la misma extracción de características:
+
+```text
+histograma HSV 512 bins + area_ratio = 513 features
+```
+
+### El informe dice XGBoost ganador pero la app usa Random Forest
+
+Corregir `best_traditional_multioutput.pkl` para que sea una exportación del XGBoost ganador, o corregir el informe si el ganador real fue otro modelo.
