@@ -1,0 +1,26 @@
+{
+  "best_model_name": "XGBoost",
+  "quality_labels": [
+    0,
+    1,
+    2
+  ],
+  "quality_names": [
+    "Mala",
+    "Buena",
+    "Regular"
+  ],
+  "size_labels": [
+    0,
+    1,
+    2
+  ],
+  "size_names": [
+    "Pequeño",
+    "Mediano",
+    "Grande"
+  ],
+  "feature_dim": 513,
+  "test_size": 0.2,
+  "random_state": 42
+}
