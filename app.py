@@ -31,7 +31,7 @@ Esta aplicación utiliza los modelos entrenados en la **Fase 2 de CRISP-DM** par
 
 # Menú lateral para opciones
 st.sidebar.title("Configuración")
-model_choice = st.sidebar.selectbox("Selecciona la arquitectura predictiva:", 
+model_choice = st.sidebar.selectbox("Selecciona la arquitectura predictiva:",
                                    ["Machine Learning Tradicional (RF)", "Deep Learning (CNN)"])
 
 st.sidebar.markdown("---")
@@ -57,70 +57,63 @@ def load_ml_model():
 def load_dl_model():
     if os.path.exists(DL_MODEL_PATH):
         return tf.keras.models.load_model(DL_MODEL_PATH)
-    # Fallback por si lo guardaron con extensión anterior
-    alt_path = 'models/cnn_multioutput.h5'
-    if os.path.exists(alt_path):
-        return tf.keras.models.load_model(alt_path)
     return None
 
 # Lógica principal de inferencia
 if uploaded_file is not None:
     st.image(uploaded_file, caption='Vista previa de la imagen', use_container_width=True)
-    
+
     if st.button("Predecir Simultáneamente"):
         with st.spinner("Analizando extracción de características y ejecutando inferencia..."):
             try:
                 if model_choice == "Machine Learning Tradicional (RF)":
                     model = load_ml_model()
                     if model is None:
-                        st.error(f"No se encontró el modelo. Asegúrate de ejecutar el notebook 02_experimentos_ml_tradicional.ipynb y que guarde en: `{ML_MODEL_PATH}`")
+                        st.error(f"No se encontró el modelo. Asegúrate de ejecutar el notebook 02 y que guarde en: `{ML_MODEL_PATH}`")
                     else:
-                        # Extracción manual de características (HSV Histograma + Área de contorno)
+                        # Extracción de características (HSV Histograma + Área de contorno)
                         features = process_image_from_streamlit(uploaded_file, model_type='ml')
-                        
-                        # Inferencia
+
+                        # Inferencia — el modelo devuelve array (1, 2): [calidad, tamaño]
                         predictions = model.predict(features)
-                        
-                        # Extraer ambas salidas
+
                         pred_quality_idx = int(predictions[0][0])
-                        pred_size_idx = int(predictions[0][1])
-                        
+                        pred_size_idx    = int(predictions[0][1])
+
                         st.success("Análisis completado mediante Machine Learning Tradicional")
-                        
-                        # Mostrar resultados en columnas
+
                         col1, col2 = st.columns(2)
                         col1.metric("Calidad", QUALITY_CLASSES[pred_quality_idx])
-                        col2.metric("Tamaño", SIZE_CLASSES[pred_size_idx])
+                        col2.metric("Tamaño",  SIZE_CLASSES[pred_size_idx])
 
-                else: # Flujo para Deep Learning
+                else:  # Deep Learning (CNN)
                     model = load_dl_model()
                     if model is None:
-                        st.error(f"No se encontró el modelo CNN. Asegúrate de ejecutar el notebook 03_experimentos_deep_learning.ipynb y que guarde en: `{DL_MODEL_PATH}`")
+                        st.error(f"No se encontró el modelo CNN. Asegúrate de ejecutar el notebook 03 y que guarde en: `{DL_MODEL_PATH}`")
                     else:
-                        # Preprocesamiento a Tensor 4D
+                        # Preprocesamiento: imagen → tensor (1, 224, 224, 3) con z-score ImageNet
                         img_tensor = process_image_from_streamlit(uploaded_file, model_type='dl')
-                        
-                        # Inferencia bifurcada (Devuelve lista [probs_calidad, probs_tamaño])
+
+                        # Inferencia — puede devolver dict o lista según versión de Keras
                         predictions = model.predict(img_tensor)
-                        
-                        # Aplicar Argmax para obtener el índice ganador
+
+                        # Obtener índices de clase
                         if isinstance(predictions, dict):
-                            pred_quality_idx = np.argmax(predictions['quality_output'], axis=1)[0]
-                            pred_size_idx    = np.argmax(predictions['size_output'], axis=1)[0]
+                            pred_quality_idx = int(np.argmax(predictions['quality_output'], axis=1)[0])
+                            pred_size_idx    = int(np.argmax(predictions['size_output'],    axis=1)[0])
+                            conf_quality     = float(np.max(predictions['quality_output'])) * 100
+                            conf_size        = float(np.max(predictions['size_output']))    * 100
                         else:
-                            pred_quality_idx = np.argmax(predictions[0], axis=1)[0]
-                            pred_size_idx    = np.argmax(predictions[1], axis=1)[0]
-                        
-                        # Obtener porcentajes de confianza
-                        conf_quality = np.max(predictions[0]) * 100
-                        conf_size = np.max(predictions[1]) * 100
-                        
+                            pred_quality_idx = int(np.argmax(predictions[0], axis=1)[0])
+                            pred_size_idx    = int(np.argmax(predictions[1], axis=1)[0])
+                            conf_quality     = float(np.max(predictions[0])) * 100
+                            conf_size        = float(np.max(predictions[1])) * 100
+
                         st.success("Análisis completado mediante Red Neuronal Convolucional")
-                        
-                        # Mostrar resultados en columnas con confianzas
+
                         col1, col2 = st.columns(2)
                         col1.metric("Calidad", QUALITY_CLASSES[pred_quality_idx], f"{conf_quality:.1f}% Confianza")
-                        col2.metric("Tamaño", SIZE_CLASSES[pred_size_idx], f"{conf_size:.1f}% Confianza")
-                        
+                        col2.metric("Tamaño",  SIZE_CLASSES[pred_size_idx],       f"{conf_size:.1f}% Confianza")
+
             except Exception as e:
                 st.error(f"Ocurrió un error inesperado al procesar la imagen: {str(e)}")
