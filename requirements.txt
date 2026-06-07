@@ -13,8 +13,14 @@ scipy>=1.11
 opencv-python>=4.8
 Pillow>=10.0
 
+# ── Machine Learning tradicional
+xgboost>=2.0
+
 # ── Deep Learning
-tensorflow>=2.13          # usar tensorflow[and-cuda] si tienes GPU NVIDIA
+tensorflow>=2.13
+# Nota Windows:
+# TensorFlow >=2.11 no usa GPU CUDA en Windows nativo.
+# Para GPU NVIDIA usar WSL2/Linux o Google Colab.
 
 # ── Visualización
 matplotlib>=3.7

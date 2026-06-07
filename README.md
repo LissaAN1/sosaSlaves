@@ -1,4 +1,5 @@
 # Clasificador de Calidad y Tamaño de Frutas
+
 **Proyecto Final — Algoritmos y Programación III · ICESI · Semestre 2026-1**
 
 Equipo **sosaSlaves**: Angy Hurtado · Hideki Tamura · David Vergara
@@ -8,30 +9,31 @@ Equipo **sosaSlaves**: Angy Hurtado · Hideki Tamura · David Vergara
 ## Descripción
 
 Sistema de clasificación multi-salida que predice simultáneamente:
+
 - **Calidad**: Mala · Regular · Buena
 - **Tamaño**: Pequeño · Mediano · Grande
 
-Implementado con metodología **CRISP-DM**, dos familias de modelos (ML tradicional y CNN) y una interfaz web Streamlit (`app.py`).
+El proyecto usa metodología **CRISP-DM**, modelos de **Machine Learning tradicional** y **Deep Learning**, además de una interfaz web desarrollada con **Streamlit** (`app.py`).
 
 ---
 
 ## Estructura del proyecto
 
-```
+```text
 sosaSlaves/
 ├── app.py                                      # Interfaz Streamlit
-├── requirements.txt
-├── README.md
+├── requirements.txt                           # Dependencias del proyecto
+├── README.md                                  # Instrucciones de instalación y ejecución
 ├── data/
-│   ├── raw/                                    # Imágenes originales (Kaggle + fotos propias)
-│   └── processed/                              # Imágenes preprocesadas + metadata.csv
+│   ├── raw/                                   # Imágenes originales, no incluidas en Git
+│   └── processed/                             # Imágenes preprocesadas + metadata.csv, no incluidas en Git
 ├── docs/
-│   └── figures/                                # Figuras del EDA (fig1–fig7.pdf) y matrices de confusión
+│   └── figures/                               # Figuras del EDA y matrices de confusión
 ├── notebooks/
 │   ├── 01_analisis_exploratorio_datos.ipynb
 │   ├── 02_experimentos_ml_tradicional.ipynb
 │   └── 03_experimentos_deep_learning.ipynb
-├── saved_models/                               # Modelos entrenados exportados
+├── saved_models/                              # Modelos entrenados exportados
 │   ├── best_rf_multioutput.pkl
 │   ├── random_forest_multioutput.pkl
 │   ├── svm_lineal_multioutput.pkl
@@ -48,38 +50,124 @@ sosaSlaves/
 
 ---
 
-## Requisitos
+## Requisitos recomendados
 
-- Python 3.10+
-- CUDA opcional (para acelerar CNN en entrenamiento)
+- **Python 3.10 o 3.11**
+- **Windows, Linux o macOS**
+- **16 GB de RAM recomendado** para entrenamiento completo
+- **GPU opcional** para entrenar la CNN
+
+> En Windows nativo, TensorFlow moderno puede no usar GPU aunque CUDA esté instalado. Para entrenar CNN con GPU NVIDIA se recomienda usar **Google Colab**, **WSL2 con Ubuntu** o un equipo Linux con GPU configurada.
 
 ---
 
-## Instalación
+## Instalación recomendada
+
+Se recomienda usar un entorno virtual para evitar conflictos con paquetes globales de Python.
+
+### 1. Clonar o descargar el repositorio
 
 ```bash
-# 1. Clonar o descargar el repositorio
 git clone https://github.com/LissaAN1/fruit-quality-classification.git
 cd fruit-quality-classification
+```
 
-# 2. Crear entorno virtual
+
+### 2. Crear entorno virtual
+
+En **Windows PowerShell**:
+
+```powershell
 python -m venv .venv
-source .venv/bin/activate        # Linux / macOS
-.venv\Scripts\activate           # Windows
+```
 
-# 3. Instalar dependencias
-pip install -r requirements.txt
+Activar el entorno:
+
+```powershell
+.\.venv\Scripts\activate
+```
+
+Si PowerShell bloquea la activación, ejecutar:
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\.venv\Scripts\activate
+```
+
+En **Linux/macOS**:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+### 3. Actualizar herramientas base
+
+```bash
+python -m pip install --upgrade pip setuptools wheel
+```
+
+### 4. Instalar dependencias
+
+```bash
+python -m pip install -r requirements.txt
 ```
 
 ---
 
-## Ejecución del pipeline completo
+## Ejecutar la aplicación web
 
-### Paso 1 — Preprocesar imágenes
+Los modelos entrenados deben estar en la carpeta `saved_models/`.
 
-Coloca las imágenes originales en `data/raw/` con la siguiente estructura:
+Desde la raíz del proyecto, ejecutar:
 
+```bash
+python -m streamlit run app.py
 ```
+
+Luego abrir en el navegador:
+
+```text
+http://localhost:8501
+```
+
+> Se recomienda usar `python -m streamlit run app.py` en lugar de `streamlit run app.py`, porque en Windows a veces el ejecutable `streamlit.exe` no queda agregado al PATH.
+
+> Tambien puedes ejecutar la app con más detalle;
+
+```bash
+python -m streamlit run app.py --logger.level=debug
+```
+
+---
+
+## Uso de la aplicación
+
+1. Seleccionar el modelo en el panel lateral:
+   - **ML Tradicional**
+   - **CNN**
+2. Subir una imagen de fruta o tomar una foto con la cámara.
+3. Presionar **"Predecir Simultáneamente"**.
+4. La aplicación muestra:
+   - Calidad estimada
+   - Tamaño estimado
+   - Porcentaje de confianza, cuando aplique
+
+---
+
+## Dataset
+
+> La carpeta `data/raw/` no está incluida en este repositorio por el tamaño del dataset.
+
+Descargar el dataset desde Google Drive:
+
+```text
+https://drive.google.com/drive/folders/1RINyjn96rrDTddl0RKnpiz-JC0aGIW8R?usp=sharing
+```
+
+Colocar las imágenes dentro de `data/raw/` respetando esta estructura:
+
+```text
 data/raw/
 ├── Bad Quality_Fruits/
 │   ├── Apple_Bad/
@@ -90,80 +178,318 @@ data/raw/
     └── ...
 ```
 
-Luego ejecuta desde la **raíz del proyecto**:
+Información del dataset:
+
+- **Fuente base**: Fruit Quality Classification — Kaggle
+- **Clase Regular**: construida manualmente desde `mix quality_fruits` + fotos propias del equipo
+- **Frutas**: Apple · Banana · Guava · Lime · Orange · Pomegranate
+- **Total imágenes originales**: 28 395
+  - Bad: 9 142
+  - Good: 14 599
+  - Regular: 4 654
+- **Imágenes aumentadas**: 113 580
+
+---
+
+## Reproducir el entrenamiento completo
+
+Este paso es opcional. Solo debe hacerse si se quiere reentrenar los modelos desde cero.
+
+### Paso 1 — Preprocesar imágenes
+
+Desde la raíz del proyecto:
 
 ```bash
 python src/data_processing/preprocess.py
-# Con opciones personalizadas:
+```
+
+Con opciones personalizadas:
+
+```bash
 python src/data_processing/preprocess.py --size 224 --augment 4
 ```
 
-Esto genera `data/processed/` con las imágenes y `data/processed/metadata.csv`.
+Esto genera:
 
-### Paso 2 — Análisis exploratorio (EDA)
+```text
+data/processed/
+data/processed/metadata.csv
+```
+
+### Paso 2 — Ejecutar análisis exploratorio
 
 ```bash
 cd notebooks
 jupyter notebook 01_analisis_exploratorio_datos.ipynb
 ```
 
-### Paso 3 — Entrenar modelos de ML tradicional
+### Paso 3 — Entrenar modelos tradicionales
 
 ```bash
 jupyter notebook 02_experimentos_ml_tradicional.ipynb
 ```
 
-Entrena Random Forest, SVM lineal y XGBoost. Guarda los modelos en `saved_models/`.
+Este notebook entrena y compara:
 
-### Paso 4 — Entrenar CNN (GPU recomendada)
+- Random Forest
+- SVM lineal
+- XGBoost
+
+Los modelos se guardan en:
+
+```text
+saved_models/
+```
+
+### Paso 4 — Entrenar CNN
 
 ```bash
 jupyter notebook 03_experimentos_deep_learning.ipynb
 ```
 
-Guarda el modelo en `saved_models/cnn_multioutput.keras`.
+La CNN es el entrenamiento más pesado. Para ejecutarla completa se recomienda:
 
-### Paso 5 — Ejecutar la aplicación web
+- Equipo con suficiente espacio libre
+- 16 GB de RAM o más
+- GPU o Google Colab
 
-```bash
-# Desde la raíz del proyecto
-streamlit run app.py
-```
-
-Abre `http://localhost:8501` en el navegador.
-
----
-
-## Uso de la aplicación
-
-1. Selecciona el modelo en el panel lateral (**ML Tradicional** o **CNN**).
-2. Sube una imagen de fruta o toma una foto con la cámara.
-3. Haz clic en **"Predecir Simultáneamente"**.
-4. La app muestra la calidad y el tamaño estimados con porcentaje de confianza (CNN).
-
----
-
-## Dataset
-
-> ⚠️ **La carpeta `data/raw/` no está incluida en este repositorio** por el tamaño del dataset.
-> Puedes descargarla desde el siguiente enlace de Google Drive:
->
-> 📁 [Descargar data/raw/ — Google Drive](https://drive.google.com/drive/folders/1RINyjn96rrDTddl0RKnpiz-JC0aGIW8R?usp=sharing)
->
-> Una vez descargada, coloca el contenido dentro de `data/raw/` respetando la estructura indicada en el Paso 1.
-
-- **Fuente base**: [Fruit Quality Classification — Kaggle](https://www.kaggle.com/datasets/ryandpark/fruit-quality-classification)
-- **Clase Regular**: construida manualmente desde `mix quality_fruits` + fotos propias del equipo
-- **Frutas**: Apple · Banana · Guava · Lime · Orange · Pomegranate
-- **Total imágenes originales**: 28 395 (Bad: 9 142 · Good: 14 599 · Regular: 4 654)
-- **Aumentadas (×4)**: 113 580
+Si se ejecuta en CPU, puede tardar mucho o reiniciar el kernel por falta de memoria.
 
 ---
 
 ## Notas técnicas
 
-- La normalización usa **z-score de ImageNet** (μ = [0.485, 0.456, 0.406], σ = [0.229, 0.224, 0.225]) en todos los módulos (`preprocess.py`, `helpers.py`, notebooks).
-- El split train/test usa **solo imágenes originales** (`augmented == 0`) para el conjunto de prueba, evitando contaminación de datos.
-- Se aplica `class_weight='balanced'` en todos los modelos para compensar el desbalanceo (IR ≈ 3.14 entre Good y Regular).
-- El mejor modelo tradicional fue **XGBoost** (F1-macro promedio más alto).
-- La CNN alcanzó **78% accuracy en calidad** y **93% en tamaño** tras 41 épocas con Early Stopping.
+- La normalización de imágenes usa **z-score de ImageNet**:
+  - Media: `[0.485, 0.456, 0.406]`
+  - Desviación estándar: `[0.229, 0.224, 0.225]`
+- El split train/test usa únicamente imágenes originales (`augmented == 0`) para el conjunto de prueba.
+- Esto evita contaminación entre imágenes originales y aumentadas.
+- Para el desbalance de clases se usa:
+  - `class_weight='balanced'` en Random Forest y SVM
+  - `sample_weight` o pesos equivalentes en XGBoost/CNN
+- Los modelos se exportan en `saved_models/`.
+- Las imágenes y archivos pesados no deben subirse a Git.
+
+---
+
+## Problemas frecuentes y solución
+
+### 1. `streamlit` no se reconoce como comando
+
+Error:
+
+```text
+streamlit : El término 'streamlit' no se reconoce...
+```
+
+Solución:
+
+```bash
+python -m streamlit run app.py
+```
+
+Si Streamlit no está instalado:
+
+```bash
+python -m pip install streamlit
+```
+
+---
+
+### 2. Error de TensorFlow: `pywrap_tensorflow`
+
+Error:
+
+```text
+ImportError: cannot import name 'pywrap_tensorflow'
+```
+
+Este error suele aparecer cuando TensorFlow quedó mal instalado o hay incompatibilidad con versiones muy nuevas de `numpy`, `protobuf` o `pandas`.
+
+Solución recomendada: crear un entorno virtual limpio.
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\activate
+python -m pip install --upgrade pip setuptools wheel
+python -m pip install -r requirements.txt
+```
+
+Si el error continúa, reinstalar TensorFlow CPU con versiones compatibles:
+
+```powershell
+python -m pip uninstall -y tensorflow tensorflow-cpu keras numpy protobuf pandas
+python -m pip install numpy==1.26.4 pandas==2.2.2 protobuf==4.25.3
+python -m pip install tensorflow-cpu==2.16.1
+python -m pip install -r requirements.txt
+```
+
+Probar TensorFlow:
+
+```bash
+python -c "import tensorflow as tf; print(tf.__version__)"
+```
+
+---
+
+### 3. TensorFlow no detecta GPU en Windows
+
+Mensaje:
+
+```text
+TensorFlow GPU support is not available on native Windows for TensorFlow >= 2.11
+GPUs disponibles: []
+```
+
+No es un error del notebook. Significa que TensorFlow usará CPU.
+
+Opciones:
+
+- Continuar con CPU, aunque será más lento.
+- Entrenar la CNN en Google Colab.
+- Usar WSL2 con Ubuntu.
+- Usar otro PC con Linux/GPU.
+
+---
+
+### 4. El kernel se reinicia entrenando la CNN
+
+Esto suele pasar por falta de RAM o por entrenar con CPU usando muchas imágenes.
+
+Opciones:
+
+- Usar otro PC con más RAM.
+- Usar Google Colab.
+- Bajar temporalmente:
+  - `IMG_HEIGHT = 128`
+  - `IMG_WIDTH = 128`
+  - `BATCH_SIZE = 8`
+  - `EPOCHS = 10`
+- No usar imágenes aumentadas en disco durante pruebas rápidas.
+
+---
+
+### 5. Git falla con `No space left on device`
+
+Error:
+
+```text
+fatal: unable to write loose object file: No space left on device
+```
+
+Causas posibles:
+
+- Poco espacio disponible en disco.
+- El proyecto está dentro de OneDrive.
+- Se intentó subir `data/`, modelos entrenados o checkpoints.
+
+Solución:
+
+No usar:
+
+```bash
+git add .
+```
+
+Usar mejor:
+
+```bash
+git add README.md requirements.txt app.py src/ notebooks/
+```
+
+Verificar `.gitignore`:
+
+```gitignore
+data/
+data/raw/
+data/processed/
+saved_models/
+models/
+*.pkl
+*.keras
+*.h5
+.ipynb_checkpoints/
+notebooks/.ipynb_checkpoints/
+notebooks/files/
+__pycache__/
+*.pyc
+.venv/
+```
+
+Se recomienda trabajar fuera de OneDrive, por ejemplo:
+
+```text
+C:\projects\sosaSlaves
+```
+
+---
+
+## Archivos que no deben subirse a Git
+
+Por tamaño o porque se generan automáticamente, no subir:
+
+```text
+data/
+saved_models/
+models/
+*.pkl
+*.keras
+*.h5
+.ipynb_checkpoints/
+notebooks/files/
+.venv/
+__pycache__/
+```
+
+Estos archivos deben compartirse por Google Drive, Git LFS o generarse nuevamente ejecutando los notebooks.
+
+---
+
+## Comandos rápidos
+
+### Instalar y ejecutar app
+
+```bash
+python -m venv .venv
+.venv\Scripts\activate
+python -m pip install --upgrade pip setuptools wheel
+python -m pip install -r requirements.txt
+python -m streamlit run app.py
+```
+
+### Ejecutar app si ya está instalado
+
+```bash
+python -m streamlit run app.py
+```
+
+### Verificar TensorFlow
+
+```bash
+python -c "import tensorflow as tf; print(tf.__version__)"
+```
+
+### Verificar Streamlit
+
+```bash
+python -m streamlit hello
+```
+
+---
+
+## Resultados esperados
+
+El sistema permite clasificar imágenes de frutas por:
+
+- **Calidad**
+  - Mala
+  - Regular
+  - Buena
+- **Tamaño**
+  - Pequeño
+  - Mediano
+  - Grande
+
+El mejor modelo tradicional reportado fue **XGBoost**, según el F1-macro promedio en las tareas de calidad y tamaño.
+
+La CNN fue corregida para usar la misma normalización durante entrenamiento e inferencia; sin embargo, su entrenamiento completo requiere más recursos computacionales que los modelos tradicionales.
